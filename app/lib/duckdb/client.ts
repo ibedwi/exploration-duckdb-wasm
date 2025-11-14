@@ -11,22 +11,30 @@ export async function initializeDuckDB() {
     return db;
   }
 
-  // Use local bundles from public directory instead of CDN
-  const MANUAL_BUNDLES: duckdb.DuckDBBundles = {
-    mvp: {
-      mainModule: "/duckdb/duckdb-mvp.wasm",
-      mainWorker: "/duckdb/duckdb-browser-mvp.worker.js",
-    },
-    eh: {
-      mainModule: "/duckdb/duckdb-eh.wasm",
-      mainWorker: "/duckdb/duckdb-browser-eh.worker.js",
-    },
-  };
+  let bundles: duckdb.DuckDBBundles;
 
-  const bundle = await duckdb.selectBundle(MANUAL_BUNDLES);
+  // Environment-based bundle selection
+  // Development: Use local bundles (no CORS issues, works offline)
+  // Production: Use CDN bundles (smaller deployment, cached globally)
+  if (import.meta.env.DEV) {
+    // Local bundles for development
+    bundles = {
+      mvp: {
+        mainModule: "/duckdb/duckdb-mvp.wasm",
+        mainWorker: "/duckdb/duckdb-browser-mvp.worker.js",
+      },
+      eh: {
+        mainModule: "/duckdb/duckdb-eh.wasm",
+        mainWorker: "/duckdb/duckdb-browser-eh.worker.js",
+      },
+    };
+  } else {
+    // CDN bundles for production (requires CORS headers in vercel.json)
+    bundles = duckdb.getJsDelivrBundles();
+  }
 
+  const bundle = await duckdb.selectBundle(bundles);
   const worker = new Worker(bundle.mainWorker!, { type: "module" });
-
   const logger = new duckdb.ConsoleLogger();
 
   db = new duckdb.AsyncDuckDB(logger, worker);
