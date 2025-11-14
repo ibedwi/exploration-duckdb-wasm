@@ -5,4 +5,13 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
+  // QUESTION: What is optimizeDeps in vite.config.ts?
+  optimizeDeps: {
+    exclude: ["@duckdb/duckdb-wasm"],
+  },
+  // QUESTION: What is worker bundle in vite.config.ts?
+  // QUESTION: Why it necessary to specify the format?
+  worker: {
+    format: "es",
+  },
 });

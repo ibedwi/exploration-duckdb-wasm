@@ -5,3 +5,9 @@
 # React Router
 /.react-router/
 /build/
+
+# DuckDB WASM bundles (copied from node_modules)
+/public/duckdb/
+
+# Generated data files
+/public/data/*.json

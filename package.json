@@ -6,11 +6,15 @@
     "build": "react-router build",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
-    "typecheck": "react-router typegen && tsc"
+    "typecheck": "react-router typegen && tsc",
+    "setup:duckdb": "bash scripts/setup-duckdb.sh",
+    "postinstall": "bash scripts/setup-duckdb.sh"
   },
   "dependencies": {
+    "@duckdb/duckdb-wasm": "^1.30.0",
     "@react-router/node": "^7.9.2",
     "@react-router/serve": "^7.9.2",
+    "apache-arrow": "^17.0.0",
     "isbot": "^5.1.31",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
