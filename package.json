@@ -7,8 +7,7 @@
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
-    "setup:duckdb": "bash scripts/setup-duckdb.sh",
-    "postinstall": "bash scripts/setup-duckdb.sh"
+    "setup:duckdb": "bash scripts/setup-duckdb.sh"
   },
   "dependencies": {
     "@duckdb/duckdb-wasm": "^1.30.0",
