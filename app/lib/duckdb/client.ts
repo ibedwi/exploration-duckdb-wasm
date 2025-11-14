@@ -11,13 +11,24 @@ export async function initializeDuckDB() {
     return db;
   }
 
+  // IMPORTANT: For Vercel deployment, we need to use unpkg.com instead of jsdelivr
+  // because unpkg has better CORS support for Web Workers
+  const UNPKG_BUNDLES: duckdb.DuckDBBundles = {
+    mvp: {
+      mainModule: "https://unpkg.com/@duckdb/duckdb-wasm@1.30.0/dist/duckdb-mvp.wasm",
+      mainWorker: "https://unpkg.com/@duckdb/duckdb-wasm@1.30.0/dist/duckdb-browser-mvp.worker.js",
+    },
+    eh: {
+      mainModule: "https://unpkg.com/@duckdb/duckdb-wasm@1.30.0/dist/duckdb-eh.wasm",
+      mainWorker: "https://unpkg.com/@duckdb/duckdb-wasm@1.30.0/dist/duckdb-browser-eh.worker.js",
+    },
+  };
+
   let bundles: duckdb.DuckDBBundles;
 
   // Environment-based bundle selection
-  // Development: Use local bundles (no CORS issues, works offline)
-  // Production: Use CDN bundles (smaller deployment, cached globally)
   if (import.meta.env.DEV) {
-    // Local bundles for development
+    // Development: Use local bundles (no CORS issues, works offline)
     bundles = {
       mvp: {
         mainModule: "/duckdb/duckdb-mvp.wasm",
@@ -29,8 +40,8 @@ export async function initializeDuckDB() {
       },
     };
   } else {
-    // CDN bundles for production (requires CORS headers in vercel.json)
-    bundles = duckdb.getJsDelivrBundles();
+    // Production: Use unpkg CDN (better CORS support than jsdelivr)
+    bundles = UNPKG_BUNDLES;
   }
 
   const bundle = await duckdb.selectBundle(bundles);
